@@ -1,0 +1,71 @@
+<html>
+    <head></head>
+    <body>
+        <h1>Co-bran Web</h1>
+
+        <div id="response-container">
+            <h2>Previous requests (coming from server's localStorage):</h2>
+            <!-- the response will be rendered here -->
+        </div>
+
+        input: <br />
+        <textarea size="300" id="input"></textarea>
+        <button type="submit" id="submit">Submit</button>
+    </body>
+    <script type="text/javascript">
+
+        (async () => {
+            let response = await getPrevious();
+            response.map(render);
+        })();
+
+        document.getElementById('submit')
+        .addEventListener('click', async () => {
+            const text = document.getElementById('input').value;
+            let response = await getEncodedText(text);
+            render(response);
+        });
+        
+        function getEncodedText(text) {
+            console.log('Getting encoded text for:', text);
+            return fetch('/api/encode', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    text
+                })
+            })
+            .then(res => res.json())
+            .then(output => {
+                return output;
+            });
+        }
+
+        function getPrevious() {
+            console.log('Fetching previous requests');
+            return fetch('/api/get-previous', {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(output => {
+                return output;
+            });
+        }
+
+        function render({from, to}) {
+            let $p = document.createElement('p')
+            $p.innerHTML = `
+                From: ${from}<br />
+                To: ${to}
+            `;
+
+            document.getElementById('response-container')
+            .appendChild($p);
+        }
+    </script>
+</html>
