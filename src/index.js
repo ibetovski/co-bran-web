@@ -3,9 +3,11 @@
 
 import { routes } from './route.js';
 
+const PORT = Deno.env.get('COBRAN_WEBSERVER_PORT');
+
 // Start listening on port 8080 of localhost.
 const server = Deno.listen({ port: 8080 });
-console.log(`HTTP webserver running.  Access it at:  http://localhost:8080/`);
+console.log(`HTTP webserver running.  Access it at:  http://localhost:${PORT}/`);
 
 // Connections to the server will be yielded up as an async iterable.
 for await (const conn of server) {
